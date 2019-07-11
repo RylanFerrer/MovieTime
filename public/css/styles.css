@@ -5,3 +5,20 @@ h1 {
 .titles-slider{
   margin-left: 30px;
 }
+.droptext{
+  position: absolute;
+  bottom: 8%;
+  width:100%;
+  z-index: 2;
+  color:#fff;
+  text-align: center;
+}
+.display-img {
+
+position: relative;
+
+}
+
+.controls {
+  color:black;
+}

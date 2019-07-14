@@ -7,13 +7,15 @@ const request = require("request");
 const config = require(__dirname + "/config.js");
 const app = express();
 
+
+//exported from config.js
 const key = config.API_KEY;
 const url = config.BASE_URL;
 
 
 
 app.use(express.static("public"));
-
+app.use(bodyParser.urlencoded({extended:true}));
 
 
 app.get("/", (req,res) => {
@@ -26,10 +28,35 @@ app.get("/movie", (req,res)=>{
 
 });
 
+app.post("/api/movie",(req,res) =>{
 
+  var movie = req.body.movie; // get the movie id
+  movieId = movie.replace(/\s+/g, ''); // remove any blank spaces from the data
+  console.log(movieId);
+});
 
 
 //endpoints
+
+app.get("/api/movie",(req,res) => {
+  axios.get(url + '/movie/' + movieId + key + '&language=en-US').then(response =>{
+    res.status(200).json(response.data);
+  });
+
+});
+
+app.get("/api/movie/similar", (req,res) => {
+  axios.get(url + '/movie/' + movieId + "/similar" + key + '&language=en-US').then(response =>{
+    res.status(200).json(response.data);
+  });
+});
+app.get("/api/movie/cast", (req,res) =>{
+  axios.get(url + '/movie/' + movieId + "/credits" +  key + '&language=en-US').then(response =>{
+    res.status(200).json(response.data);
+  });
+
+});
+
 app.get("/api/nowplaying", (req,res,next) => { // we are going to send the json information from the nowplaying movies to the route /api/nowplaying
   axios.get(url + "/movie/now_playing" + key).then(response =>{
     res.status(200).json(response.data);

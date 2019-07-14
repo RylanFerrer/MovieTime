@@ -11,18 +11,32 @@ const settings = {
 }
 
 
-getnowPlaying();
+
 
 //Event Listeners
 //When someone clicks on a movie poster I want to do specific events
-$('#nowPlaying').on('click', '.movie', function() {
+$('#test').on('click', '.movie', function() {
   movieID = $(this).children('a').attr('id'); // we want to get the movies id that was set when it was appended
   changePage(); // and then call the changepage function to change the page of the website
-
+  console.log("I got clicked");
 
 });
 
 //Functions
+
+//This function will get the movie id and post it to a route where another function will be able to grab it and use that ids information
+function postId(movieID)
+{
+
+  $.ajax({
+    method:'POST',
+    url: "/api/movie",
+    data: {movie:movieID},
+    success: function (data) {
+      console.log(JSON.stringify(data));
+    }
+  });
+}
 //This function will change the page when a movie poster is clicked
 function changePage() {
   $.ajax({
@@ -31,31 +45,41 @@ function changePage() {
     success: function(data) {
       console.log(data);
       $("#test").html(data); // we are now going to get the html data that was sent via the route /movie and put it in the main section
+      slickinit();
+      postId(movieID);
       addMovieDetails(movieID); // and now add the movie details to the new page loaded
+
     }
   });
 }
 
 //This function will add the details of a movie to the page this function is to be used when someone clicks on a movie poster
 function addMovieDetails(movie) {
-  settings.url = 'https://api.themoviedb.org/3/movie/' + movie + '?api_key=' + apikey + '&language=en-US';
+  settings.url = '/api/movie'; // go to the route and grab the information that was sent by the postid function
   $.ajax(settings).done(function(response) {
     console.log(response); // this is for debugging purposes
     $("#Movie-Title").text(response.original_title); // We are going to change the text of the h1 with the id of movie-title to the selected movies title
     let backdrop = imgURL + "original" + response.backdrop_path; // getting the movies backdrop title
     $("#Movie-Backdrop").attr("src", backdrop); // change the src of the id img movie backdrop to the variable backdrop
     $("#Description").text(response.overview); //change the description to the overview of the movie
-  });
-}
 
-//this function will get all the movies that are playing in the theaters right now and display them with the slick carousel plugin
-function getnowPlaying() {
-  settings.url = "/api/nowplaying"; //get data from the api/nowPlaying route
+  });
+    getMovie("Related","/api/movie/similar"); // get movies that are similar to this one and put them in a carousel
+    getCast();
+
+}
+slickinit();
+getMovie("nowPlaying","/api/nowplaying");
+
+//this function will get the movies requested and put them into a slick carousel
+function getMovie(slider,url) {
+  settings.url = url; //get data from the api/nowPlaying route
   $.ajax(settings).done(function(response) {
 
     $.each(response.results, function(i, item) { //now get each movie
       // add the movie picture and title to a carousel item
-      $('#nowPlaying').slick('slickAdd', "<div class = 'movie' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
+
+      $('#' + slider).slick('slickAdd', "<div class = 'movie' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
 
 
     });
@@ -90,6 +114,13 @@ function displayPopular() {
   });
 }
 
+function getCast()
+{
+  settings.url = "/api/movie/cast";
+  $.ajax(settings).done(function(response){
+    console.log(response);
+});
+}
 
 //get random num function
 function getRandom(length) {
@@ -100,47 +131,51 @@ function getRandom(length) {
 
 
 // settings for the carousel for movies
-$('.titles-slider').slick({
-  infinite: false,
-  speed: 400,
-  dots: true,
-  slidesToShow: 6,
-  slidesToScroll: 6,
-  responsive: [{
-      breakpoint: 1200,
-      settings: {
-        slidesToShow: 6,
-        slidesToScroll: 1
-      }
-    },
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 5,
-        slidesToScroll: 5
-      }
-    },
-    {
-      breakpoint: 992,
-      settings: {
-        slidesToShow: 4,
-        slidesToScroll: 4
-      }
-    },
-    {
+function slickinit()
+{
+  $('.titles-slider').slick({
+    infinite: false,
+    speed: 400,
+    dots: true,
+    slidesToShow: 6,
+    slidesToScroll: 6,
+    responsive: [{
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 6,
+          slidesToScroll: 1
+        }
+      },
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 5
+        }
+      },
+      {
+        breakpoint: 992,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 4
+        }
+      },
+      {
 
-      breakpoint: 768,
-      settings: {
-        slidesToShow: 3,
-        slidesToScroll: 3
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 3
+        }
+      },
+      {
+        breakpoint: 576,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2
+        }
       }
-    },
-    {
-      breakpoint: 576,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 2
-      }
-    }
-  ]
-});
+    ]
+  });
+
+}

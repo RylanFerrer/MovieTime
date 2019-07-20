@@ -27,17 +27,32 @@ app.get("/movie", (req,res)=>{
   res.sendFile(__dirname + "/movie.html");
 
 });
+app.get("/actor", (req,res)=>{
+
+  res.sendFile(__dirname + "/cast.html");
+
+});
 
 app.post("/api/movie",(req,res) =>{
 
   var movie = req.body.movie; // get the movie id
   movieId = movie.replace(/\s+/g, ''); // remove any blank spaces from the data
-  console.log(movieId);
+
 });
 
+app.post("/api/actor", (req,res) =>{
+  var actor = req.body.actor;
+  console.log(actor);
+  actorId = actor.replace(/\s+/g, '');
+});
 
 //endpoints
+app.get("/api/actor", (req,res) => {
+  axios.get(url + '/person/' + actorId + key + '&language=en-US').then(response =>{
+    res.status(200).json(response.data);
+  });
 
+});
 app.get("/api/movie",(req,res) => {
   axios.get(url + '/movie/' + movieId + key + '&language=en-US').then(response =>{
     res.status(200).json(response.data);

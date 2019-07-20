@@ -15,11 +15,18 @@ const settings = {
 
 //Event Listeners
 //When someone clicks on a movie poster I want to do specific events
-$('#test').on('click', '.movie', function() {
-  movieID = $(this).children('a').attr('id'); // we want to get the movies id that was set when it was appended
-  changePage(); // and then call the changepage function to change the page of the website
-  console.log("I got clicked");
 
+$('#main').on('click', '.movie',  function()  {
+  movieID = $(this).children('a').attr('id'); // we want to get the movies id that was set when it was appended
+  changePage("movie"); // and then call the changepage function to change the page of the websit
+});
+
+
+$('#main').on('click', '.cast', function(){
+  castID = $(this).children('a').attr('id');
+  changePage("actor");
+  postCastId(castID);
+  console.log("I got clicked!");
 });
 
 //Functions
@@ -31,33 +38,64 @@ function postId(movieID)
   $.ajax({
     method:'POST',
     url: "/api/movie",
-    data: {movie:movieID},
-    success: function (data) {
-      console.log(JSON.stringify(data));
-    }
+    data: {movie:movieID}, // post the movie id to the api/movie route
+
   });
 }
-//This function will change the page when a movie poster is clicked
-function changePage() {
+function postCastId(id)
+{
   $.ajax({
-    url: '/movie',
-    method: 'GET',
-    success: function(data) {
-      console.log(data);
-      $("#test").html(data); // we are now going to get the html data that was sent via the route /movie and put it in the main section
-      slickinit();
-      postId(movieID);
-      addMovieDetails(movieID); // and now add the movie details to the new page loaded
+    url: '/api/actor',
+    method: 'POST',
+    data:{actor:id}
 
-    }
   });
 }
 
+//This function will change the page when a movie poster is clicked
+function changePage(type) {
+
+  if (type == "movie")
+  {
+    $.ajax({
+      url: '/movie',
+      method: 'GET',
+      success: function(data) {
+        $("#main").html(data); // we are now going to get the html data that was sent via the route /movie and put it in the main section
+        slickinit();
+        postId(movieID);
+        addMovieDetails(movieID); // and now add the movie details to the new page loaded
+
+      }
+    });
+  }
+  else if (type == "actor")
+  {
+    $.ajax({
+      url: '/actor',
+      method: 'GET',
+      success: function(data) {
+        $("#main").html(data); // we are now going to get the html data that was sent via the route /movie and put it in the main section
+        slickinit();
+        addActorDetails(castID);
+      }
+    });
+
+  }
+}
+
+
+function addActorDetails(actor)
+{
+  settings.url = '/api/actor';
+  $.ajax(settings).done(function(response){
+    $("#actor").text(response.name);
+  });
+}
 //This function will add the details of a movie to the page this function is to be used when someone clicks on a movie poster
 function addMovieDetails(movie) {
   settings.url = '/api/movie'; // go to the route and grab the information that was sent by the postid function
   $.ajax(settings).done(function(response) {
-    console.log(response); // this is for debugging purposes
     $("#Movie-Title").text(response.original_title); // We are going to change the text of the h1 with the id of movie-title to the selected movies title
     let backdrop = imgURL + "original" + response.backdrop_path; // getting the movies backdrop title
     $("#Movie-Backdrop").attr("src", backdrop); // change the src of the id img movie backdrop to the variable backdrop
@@ -68,8 +106,10 @@ function addMovieDetails(movie) {
     getCast();
 
 }
+
 slickinit();
 getMovie("nowPlaying","/api/nowplaying");
+displayPopular();
 
 //this function will get the movies requested and put them into a slick carousel
 function getMovie(slider,url) {
@@ -85,7 +125,7 @@ function getMovie(slider,url) {
     });
   });
 }
-displayPopular();
+
 
 //This function gets three random movies that are currently popular and displays them
 function displayPopular() {
@@ -116,10 +156,15 @@ function displayPopular() {
 
 function getCast()
 {
+
   settings.url = "/api/movie/cast";
   $.ajax(settings).done(function(response){
-    console.log(response);
-});
+    $.each(response.cast, function(i, item) { //now get each movie
+      // add the movie picture and title to a carousel item
+      $('#Cast').slick('slickAdd', "<div class = 'cast' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.profile_path + "'/img></a>" + "<p>" + item.name+ "</p>" + " </div>");
+
+    });
+  });
 }
 
 //get random num function

@@ -33,40 +33,49 @@ app.get("/actor", (req,res)=>{
 
 });
 
-app.post("/api/movie",(req,res) =>{
-
-  var movie = req.body.movie; // get the movie id
-  movieId = movie.replace(/\s+/g, ''); // remove any blank spaces from the data
-
-});
 
 app.post("/api/actor", (req,res) =>{
-  var actor = req.body.actor;
-  console.log(actor);
-  actorId = actor.replace(/\s+/g, '');
+
 });
 
 //endpoints
-app.get("/api/actor", (req,res) => {
-  axios.get(url + '/person/' + actorId + key + '&language=en-US').then(response =>{
+
+
+
+
+app.get("/api/actor/:actor", (req,res) => {
+  var actor = req.params.actor;
+  var actorId = actor.replace(/\s+/g, '');
+  axios.get(url + '/person/' + actorId +  key + '&language=en-US').then(response =>{
     res.status(200).json(response.data);
   });
 
 });
-app.get("/api/movie",(req,res) => {
-  axios.get(url + '/movie/' + movieId + key + '&language=en-US').then(response =>{
-    res.status(200).json(response.data);
-  });
-
-});
-
-app.get("/api/movie/similar", (req,res) => {
-  axios.get(url + '/movie/' + movieId + "/similar" + key + '&language=en-US').then(response =>{
+app.get("/api/actor/:actor/credits", (req,res) => {
+    actorId = req.params.actor;
+  axios.get(url + '/person/' + actorId +"/credits" + key + '&language=en-US').then(response =>{
     res.status(200).json(response.data);
   });
 });
-app.get("/api/movie/cast", (req,res) =>{
-  axios.get(url + '/movie/' + movieId + "/credits" +  key + '&language=en-US').then(response =>{
+
+app.get("/api/movies/:movie", (req,res) =>{
+  var movie = req.params.movie;
+
+  axios.get(url + '/movie/' + movie + key + '&language=en-US').then(response =>{
+    res.status(200).json(response.data);
+ });
+});
+app.get("/api/movies/:movie/similar", (req,res) => {
+    var movie = req.params.movie;
+
+  axios.get(url + '/movie/' + movie + "/similar" + key + '&language=en-US').then(response =>{
+    res.status(200).json(response.data);
+  });
+});
+app.get("/api/movies/:movie/cast", (req,res) =>{
+  var movie = req.params.movie;
+
+  axios.get(url + '/movie/' + movie + "/credits" +  key + '&language=en-US').then(response =>{
     res.status(200).json(response.data);
   });
 

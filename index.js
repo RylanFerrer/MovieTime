@@ -32,22 +32,29 @@ app.get("/actor", (req,res)=>{
   res.sendFile(__dirname + "/cast.html");
 
 });
+app.get('/television', (req,res) => {
+  res.sendFile(__dirname + "/television.html");
+});
 app.get("/search", (req,res) =>{
   res.sendFile(__dirname + "/search.html");
 });
 
 
-app.post("/api/actor", (req,res) =>{
 
-});
 
 //endpoints
+app.get("/api/tv/:tv" , (req,res) => {
+  var tvId = req.params.tv;
 
+  axios.get(url + '/tv/' + tvId + key + '&language=en-US').then(response => {
+    res.status(200).json(response.data);
+  });
+});
 app.get("/api/search/:search", (req,res) =>{
 
     var search = req.params.search;
 
-    axios.get(url + '/search/movie' + key + '&language=en-US&query=' + search + "&page=1&include_adult=false" ).then(response => {
+    axios.get(url + '/search/multi' + key + '&language=en-US&query=' + search + "&page=1&include_adult=false" ).then(response => {
       res.status(200).json(response.data);
     });
 

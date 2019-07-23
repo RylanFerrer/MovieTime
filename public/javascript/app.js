@@ -21,6 +21,11 @@ $('#main').on('click', '.movie',  function()  {
   changePage("movie"); // and then call the changepage function to change the page of the websit
 });
 
+$('#main').on('click', '.television', function(){
+  tvId = $(this).children('a').attr('id');
+  console.log("I got clicked");
+  changePage("tv");
+});
 
 $('#main').on('click', '.cast', function(){
   castID = $(this).children('a').attr('id');
@@ -82,19 +87,46 @@ function changePage(type) {
       }
     });
   }
+  else if(type == "tv")
+  {
+    $.get({
+      url: '/television',
+      method: 'GET',
+      success: function(data) {
+        $('#main').html(data);
+        addTvDetails(tvId);
+      }
+    });
+  }
 }
-
+function addTvDetails(tvId)
+{
+  settings.url = '/api/tv/' + tvId;
+  $.get(settings).done(function(response){
+    console.log(response);
+    $('#tvName').text(response.name);
+  });
+}
 function addSearchResults(search)
 {
   fakeLoader();
   settings.url = "/api/search/" + search;
   $.get(settings).done(function(response){
-    console.log(response);
     $.each(response.results,function(i,item){
-
-      if(item.poster_path)
+      if (item.media_type == "movie")
       {
-          $('#results').append("<div class = 'movie col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
+        if(item.poster_path)
+        {
+            $('#results').append("<div class = 'movie col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
+        }
+
+      }
+      else if (item.media_type == "tv")
+      {
+        if(item.poster_path)
+        {
+          $('#tvResults').append("<div class = 'television col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.name + "</p>" + " </div>");
+        }
       }
 
     });

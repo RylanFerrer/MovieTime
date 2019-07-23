@@ -14,7 +14,7 @@ fakeLoader();
 
 
 //Event Listeners
-//When someone clicks on a movie poster I want to do specific events
+
 
 $('#main').on('click', '.movie',  function()  {
   movieID = $(this).children('a').attr('id'); // we want to get the movies id that was set when it was appended
@@ -27,6 +27,19 @@ $('#main').on('click', '.cast', function(){
   changePage("actor");
 });
 
+$('.navbar').on('submit','#search-form',function(event){
+  event.preventDefault();
+  searchInput = $(this).children('#search-input').val();
+  if (searchInput != '')
+  {
+
+    changePage("search");
+  }
+});
+
+$('#search-input').click(function(){
+  this.select();
+});
 //Functions
 
 //This function will change the page when a movie poster is clicked
@@ -58,9 +71,35 @@ function changePage(type) {
     });
 
   }
+  else if (type == "search")
+  {
+    $.get({
+      url: '/search',
+      method: 'GET',
+      success: function(data) {
+        $("#main").html(data); // we are now going to get the html data that was sent via the route /movie and put it in the main section
+        addSearchResults(searchInput);
+      }
+    });
+  }
 }
 
+function addSearchResults(search)
+{
+  fakeLoader();
+  settings.url = "/api/search/" + search;
+  $.get(settings).done(function(response){
+    console.log(response);
+    $.each(response.results,function(i,item){
 
+      if(item.poster_path)
+      {
+          $('#results').append("<div class = 'movie col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
+      }
+
+    });
+  });
+}
 function addActorDetails(actor)
 {
   fakeLoader();

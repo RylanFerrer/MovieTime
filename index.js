@@ -32,6 +32,9 @@ app.get("/actor", (req,res)=>{
   res.sendFile(__dirname + "/cast.html");
 
 });
+app.get("/search", (req,res) =>{
+  res.sendFile(__dirname + "/search.html");
+});
 
 
 app.post("/api/actor", (req,res) =>{
@@ -40,6 +43,15 @@ app.post("/api/actor", (req,res) =>{
 
 //endpoints
 
+app.get("/api/search/:search", (req,res) =>{
+
+    var search = req.params.search;
+
+    axios.get(url + '/search/movie' + key + '&language=en-US&query=' + search + "&page=1&include_adult=false" ).then(response => {
+      res.status(200).json(response.data);
+    });
+
+});
 
 
 

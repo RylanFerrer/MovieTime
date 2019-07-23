@@ -1,7 +1,13 @@
+body{
+  background-color:#272b2e;
+  color: white;
+
+}
 h1 {
-  color: red;
+  color: white;
   text-align: center;
 }
+.slick-next{ right: 20px;}
 .titles-slider{
   margin-left: 30px;
 }
@@ -13,16 +19,48 @@ h1 {
   color:#fff;
   text-align: center;
 }
+.popular{
+  padding: 3% 3%;
+}
 .display-img {
 
 position: relative;
 outline: none;
 
 }
-
+.character{
+  font-weight: bold;
+  margin-bottom: -5px
+}
+.description {
+  padding-left: 10%;
+  padding-right: 10%;
+}
 .controls {
   color:black;
 }
-#profile {
-  text-align: center;
+.carousel{
+  margin-right: 10px;
+}
+.profile{
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  margin-bottom: 20px;
+}
+#bio{
+  margin-bottom: 50px;
+}
+#Movie-Backdrop{
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+@media screen and (min-width: 1900px) {
+
+  #populardisplay{
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
 }

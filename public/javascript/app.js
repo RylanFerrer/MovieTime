@@ -25,7 +25,6 @@ $('#main').on('click', '.movie',  function()  {
 $('#main').on('click', '.cast', function(){
   castID = $(this).children('a').attr('id');
   changePage("actor");
-  console.log("I got clicked!");
 });
 
 //Functions
@@ -67,6 +66,7 @@ function addActorDetails(actor)
   fakeLoader();
   settings.url = "/api/actor/" + actor ;
   $.get(settings).done(function(response){
+    $("#bio").text(response.biography);
     $("#actor").text(response.name);
     let poster = imgURL + "w185" + response.profile_path;
     $("#profile").attr("src",poster);
@@ -97,7 +97,7 @@ function addMovieDetails(movie) {
   });
 
   var moviePath = "/api/movies/" + movie + "/similar";
-  console.log(moviePath);
+
    getMovie("Related",moviePath); // get movies that are similar to this one and put them in a carousel
     getCast(movie);
 
@@ -115,7 +115,7 @@ function getMovie(slider,url) {
     $.each(response.results, function(i, item) { //now get each movie
       // add the movie picture and title to a carousel item
 
-      $('#' + slider).slick('slickAdd', "<div class = 'movie' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
+      $('#' + slider).slick('slickAdd', "<div class = 'movie carousel' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
 
 
     });
@@ -161,11 +161,12 @@ function getCast(movie)
 
   settings.url = "/api/movies/" + movie +"/cast";
   $.ajax(settings).done(function(response){
+
     $.each(response.cast, function(i, item) { //now get each movie
       // add the movie picture and title to a carousel item
       if(item.profile_path)
       {
-          $('#Cast').slick('slickAdd', "<div class = 'cast' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.profile_path + "'/img></a>" + "<p>" + item.name+ "</p>" + " </div>");
+          $('#Cast').slick('slickAdd', "<div class = 'cast carousel' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.profile_path + "'/img></a>" +"<p class = 'character'>" +item.character + "</p>" + "<p>" + item.name+ "</p>" + " </div>");
       }
 
 

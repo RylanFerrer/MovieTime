@@ -32,6 +32,17 @@ outline: none;
   font-weight: bold;
   margin-bottom: -5px
 }
+.trailer {
+  margin-bottom: 100px
+}
+.trailer iframe{
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  height: 500px;
+  width: 50%;
+
+}
 .description {
   padding-left: 10%;
   padding-right: 10%;
@@ -51,7 +62,7 @@ outline: none;
 #bio{
   margin-bottom: 50px;
 }
-#Movie-Backdrop{
+.backdrop{
   margin-left: auto;
   margin-right: auto;
   display: block;

@@ -8,7 +8,7 @@ const settings = {
   method: 'GET',
   headers: {},
   data: {}
-}
+};
 fakeLoader();
 
 
@@ -23,7 +23,6 @@ $('#main').on('click', '.movie',  function()  {
 
 $('#main').on('click', '.television', function(){
   tvId = $(this).children('a').attr('id');
-  console.log("I got clicked");
   changePage("tv");
 });
 
@@ -94,6 +93,7 @@ function changePage(type) {
       method: 'GET',
       success: function(data) {
         $('#main').html(data);
+        slickinit();
         addTvDetails(tvId);
       }
     });
@@ -103,21 +103,28 @@ function addTvDetails(tvId)
 {
   settings.url = '/api/tv/' + tvId;
   $.get(settings).done(function(response){
-    console.log(response);
+    let backdrop = imgURL + "original" + response.backdrop_path;
+    $('#television-backdrop').attr("src",backdrop);
     $('#tvName').text(response.name);
+    $('.overview').text(response.overview);
   });
+  getTelevisionCast(tvId);
 }
 function addSearchResults(search)
 {
   fakeLoader();
   settings.url = "/api/search/" + search;
   $.get(settings).done(function(response){
+    var movieSearch = 0;
+    var tvSearch = 0;
+    var actorSearch = 0;
     $.each(response.results,function(i,item){
       if (item.media_type == "movie")
       {
         if(item.poster_path)
         {
             $('#results').append("<div class = 'movie col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
+            movieSearch++;
         }
 
       }
@@ -126,8 +133,22 @@ function addSearchResults(search)
         if(item.poster_path)
         {
           $('#tvResults').append("<div class = 'television col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.name + "</p>" + " </div>");
+          tvSearch++;
+
         }
       }
+      else if(item.media_type == "person")
+      {
+        if(item.profile_path)
+        {
+            $('#actorResults').append("<div class = 'cast col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.profile_path + "'/img></a>" + "<p>" + item.name + "</p>" + " </div>");
+            actorSearch++;
+        }
+      }
+      $('.tvSearch').text(tvSearch +  " Shows Found");
+      $('.actorSearch').text(actorSearch + " Actors Found");
+      $('.movieSearch').text(movieSearch + " Movies Found");
+
 
     });
   });
@@ -144,11 +165,23 @@ function addActorDetails(actor)
   });
   settings.url = '/api/actor/' + actor + '/credits';
   $.get(settings).done(function(response){
+
     $.each(response.cast,function(i,item){
-      if(item.poster_path)
+      if(item.media_type == "movie")
       {
-          $('#movies').append("<div class = 'movie col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
+        if(item.poster_path)
+        {
+            $('#movies').append("<div class = 'movie col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.original_title + "</p>" + " </div>");
+        }
       }
+      else if (item.media_type == "tv")
+      {
+        if(item.poster_path)
+        {
+            $('#television').append("<div class = 'television col-2' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.name + "</p>" + " </div>");
+        }
+      }
+
 
     });
   });
@@ -168,9 +201,9 @@ function addMovieDetails(movie) {
   });
 
   var moviePath = "/api/movies/" + movie + "/similar";
-
+  getMovieTrailer(movie);
    getMovie("Related",moviePath); // get movies that are similar to this one and put them in a carousel
-    getCast(movie);
+   getMovieCast(movie);
 
 }
 
@@ -226,12 +259,26 @@ function displayPopular() {
     }
   });
 }
+function getTelevisionCast(television)
+{
+  settings.url = "/api/television/" + television + "/cast";
+  $.get(settings).done(function(response){
+        $.each(response.cast, function(i, item) { //now get each movie
+          // add the movie picture and title to a carousel item
+          if(item.profile_path)
+          {
+              $('#Cast').slick('slickAdd', "<div class = 'cast carousel' ><a  id =' " + item.id + "'><img  src='" + imgURL + "w154" + item.profile_path + "'/img></a>" +"<p class = 'character'>" +item.character + "</p>" + "<p>" + item.name+ "</p>" + " </div>");
+          }
 
-function getCast(movie)
+
+        });
+  });
+}
+function getMovieCast(movie)
 {
 
   settings.url = "/api/movies/" + movie +"/cast";
-  $.ajax(settings).done(function(response){
+  $.get(settings).done(function(response){
 
     $.each(response.cast, function(i, item) { //now get each movie
       // add the movie picture and title to a carousel item
@@ -245,6 +292,13 @@ function getCast(movie)
   });
 }
 
+function getMovieTrailer(movieId)
+{
+  settings.url = "/api/movies/" + movieId +"/video";
+  $.get(settings).done(function(response){
+     $(".trailer").append("<iframe src ='https://www.youtube.com/embed/" + response.results[0].key + "' allowfullscreen </iframe>");
+  });
+}
 //get random num function
 function getRandom(length) {
   var random = Math.floor((Math.random() * length) + 1);  // this variable will get a random number between 1 and the length chosen by the function

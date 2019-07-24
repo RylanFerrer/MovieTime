@@ -43,6 +43,15 @@ app.get("/search", (req,res) =>{
 
 
 //endpoints
+app.get("/api/television/:tv/cast", (req,res) => {
+  var tvId = req.params.tv;
+  axios.get(url + '/tv/' + tvId + "/credits" + key + '&language=en-US').then(response => {
+    res.status(200).json(response.data);
+  });
+});
+
+
+
 app.get("/api/tv/:tv" , (req,res) => {
   var tvId = req.params.tv;
 
@@ -71,8 +80,9 @@ app.get("/api/actor/:actor", (req,res) => {
 
 });
 app.get("/api/actor/:actor/credits", (req,res) => {
-    actorId = req.params.actor;
-  axios.get(url + '/person/' + actorId +"/credits" + key + '&language=en-US').then(response =>{
+  var actor = req.params.actor;
+  var actorId = actor.replace(/\s+/g, '');
+  axios.get(url + '/person/' + actorId +"/combined_credits" + key + '&language=en-US').then(response =>{
     res.status(200).json(response.data);
   });
 });
@@ -97,7 +107,13 @@ app.get("/api/movies/:movie/cast", (req,res) =>{
   axios.get(url + '/movie/' + movie + "/credits" +  key + '&language=en-US').then(response =>{
     res.status(200).json(response.data);
   });
+});
 
+app.get("/api/movies/:movie/video", (req,res) => {
+  var movie = req.params.movie;
+  axios.get(url + '/movie/' + movie + "/videos" +  key + '&language=en-US').then(response =>{
+    res.status(200).json(response.data);
+  });
 });
 
 app.get("/api/nowplaying", (req,res,next) => { // we are going to send the json information from the nowplaying movies to the route /api/nowplaying

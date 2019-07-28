@@ -21,7 +21,9 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.get("/", (req,res) => {
   res.sendFile(__dirname + "/index.html");
 });
-
+app.get("/main", (req,res) => {
+  res.sendFile(__dirname + "/main.html")
+});
 app.get("/movie", (req,res)=>{
 
   res.sendFile(__dirname + "/movie.html");
@@ -115,12 +117,31 @@ app.get("/api/movies/:movie/video", (req,res) => {
     res.status(200).json(response.data);
   });
 });
-
-app.get("/api/nowplaying", (req,res,next) => { // we are going to send the json information from the nowplaying movies to the route /api/nowplaying
-  axios.get(url + "/movie/now_playing" + key).then(response =>{
+app.get("/api/television/:tv/video", (req,res) => {
+  var tvId = req.params.tv;
+  axios.get(url + '/tv/' + tvId + "/videos" +  key + '&language=en-US').then(response =>{
     res.status(200).json(response.data);
   });
+});
+app.get("/api/featured/:movie", (req,res,next) => {
+  var movie = req.params.movie;
+  axios.get(url + "/movie/" + movie+ key).then(response =>{
+    res.status(200).json(response.data);
+  });
+});
+app.get("/api/featured/tv/:television", (req,res,next) => {
+  var television = req.params.television;
 
+  axios.get(url + "/tv/" + television+ key).then(response =>{
+    res.status(200).json(response.data);
+  });
+});
+app.get("/api/featured/tv/:television/similar", (req,res,next) => {
+  var television = req.params.television;
+
+  axios.get(url + "/tv/" + television + "/similar" + key).then(response =>{
+    res.status(200).json(response.data);
+  });
 });
 
 app.get("/api/popular" , (req,res,next) => {

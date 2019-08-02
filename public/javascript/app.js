@@ -18,6 +18,7 @@ fakeLoader();
 
 $('#main').on('click', '.movie',  function()  {
   movieID = $(this).children('a').attr('id'); // we want to get the movies id that was set when it was appended
+  console.log(movieID);
   changePage("movie"); // and then call the changepage function to change the page of the websit
 });
 
@@ -35,6 +36,7 @@ $('#main').on('click', '.backButton', function(){
   changePage("index");
 });
 
+
 $('.navbar').on('submit','#search-form',function(event){
   event.preventDefault();
   searchInput = $(this).children('#search-input').val();
@@ -47,6 +49,12 @@ $('.navbar').on('submit','#search-form',function(event){
 
 $('#search-input').click(function(){
   this.select();
+});
+
+$('.carousel-item').on('click','.movieButton', function (){
+    movieID = $(this).attr('id');
+    console.log(movieID);
+  changePage('movie');
 });
 //Functions
 
@@ -273,31 +281,24 @@ function displayPopular() {
   settings.url = "/api/popular"; //get the data from the /api/popular route
 
   $.ajax(settings).done(function(response) {
-    var i = 0;
-    //while there is not three items in the carousel keep adding them on
-    while (i != 3) {
-      random = getRandom(response.results.length); // we are getting a random number from using the getRandom function
-        if (i == 0)
-      { // I am starting with this so I can get the first movie chosen as the active carousel item
-         let img = imgURL + "original" + response.results[random].backdrop_path; // making the image url so I do not have to add it all in the append area
-         // for the first item I am going to add the carousel to the empty div with the id popular display
-         if(response.results[random].backdrop_path)
+        let counter = 0;
+        $.each(response.results, function(i, item) {
+        if (counter == 0)
+      {
+         let img = imgURL + "original" + item.backdrop_path;
+         console.log(img);
+         if(item.backdrop_path)
          {
-             $("#populardisplay").append("<div class='carousel-inner'><div class = 'overlay'></div>  <div class='carousel-item active '><div class = 'droptext'> <h2>" + response.results[random].original_title + " </h2></div>  <img class='d-block w-10 img-fluid display-img ' src=" + img + " alt='First slide'>  </div>");
+             $("#populardisplay").append("<div class='carousel-inner'> <div  class='carousel-item active '><div class = 'movie'><a id = '" +item.id + "' class= 'movieButton btn  ' >About this movie</a></div><div class = 'overlay'> <div class = 'droptext'> <h2>" + item.original_title + " </h2>  </div> <img    class='d-block w-10 img-fluid display-img  movie' src=" + img + " alt='First slide'> </div>");
          }
       }
-         else
+         else if (counter < 3 && counter >0)
       {
-        img = imgURL + "original" + response.results[random].backdrop_path;
-        //for this part I am now getting the carousel inner class that was added in when we appened the first movie and created the carousel
-        // I am now adding two more movies into the carousel
-        if(response.results[random].backdrop_path)
-        {
-            $(".carousel-inner").append(" <div class='carousel-item display-img'> <div class = 'droptext'> <h2>" + response.results[random].original_title + " </h2></div> <img class='d-block w-10 img-fluid ' src=" + img + " alt='First slide'</div>");
-        }
+             let img = imgURL + "original" + item.backdrop_path;
+            $(".carousel-inner").append(" <div class='carousel-item display-img' > <div class = 'movie'><a id = '" +item.id + "' class= 'movieButton btn btn-primary ' >About this movie</a></div><div class = 'droptext'> <h2>" + item.original_title + " </h2></div>  <img id = '" +item.id + "' class='d-block w-10 img-fluid ' src=" + img + " alt='First slide'</div>");
       }
-      i++; // increment the i by one
-    }
+      counter++;
+    });
   });
 }
 function getTelevisionCast(television)
@@ -354,7 +355,7 @@ function getRandom(length) {
 function fakeLoader()
 {
   $.fakeLoader({
-    bgColor: '#2ecc71',
+    bgColor: '#272b2e',
     spinner: "spinner1"
   });
 }

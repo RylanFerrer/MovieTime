@@ -74,6 +74,15 @@ outline: none;
   cursor: pointer;
 }
 
+.movieButton {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  background-color: red;
+  color: black;
+
+}
 .description {
   padding-left: 15%;
   padding-right: 15%;
@@ -99,11 +108,21 @@ outline: none;
   margin-right: auto;
   display: block;
 }
-@media screen and (min-width: 1900px) {
+
 
   #populardisplay{
     margin-left: auto;
     margin-right: auto;
     display: block;
   }
+
+  .carousel-item:after {
+  content:"";
+  display:block;
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(0,0,0,0.25);
 }

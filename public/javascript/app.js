@@ -15,10 +15,12 @@ fakeLoader();
 
 //Event Listeners
 
+// call variables to be used for the the event Listeners
 
+
+var movieID, tvId,castID;
 $('#main').on('click', '.movie',  function()  {
   movieID = $(this).children('a').attr('id'); // we want to get the movies id that was set when it was appended
-  console.log(movieID);
   changePage("movie"); // and then call the changepage function to change the page of the websit
 });
 
@@ -53,12 +55,13 @@ $('#search-input').click(function(){
 
 $('.carousel-item').on('click','.movieButton', function (){
     movieID = $(this).attr('id');
-    console.log(movieID);
   changePage('movie');
 });
+
+
 //Functions
 
-//This function will change the page when a movie poster is clicked
+
 function changePage(type) {
 
   if (type == "movie")
@@ -124,6 +127,7 @@ function changePage(type) {
 
 function addTvDetails(tvId)
 {
+  fakeLoader();
   settings.url = '/api/tv/' + tvId;
   $.get(settings).done(function(response){
     let backdrop = imgURL + "original" + response.backdrop_path;
@@ -135,6 +139,8 @@ function addTvDetails(tvId)
   getTelevision('Related','/api/featured/tv/' + tvId +'/similar');
   getTelevisionTrailer(tvId);
 }
+
+
 function addSearchResults(search)
 {
   fakeLoader();
@@ -210,7 +216,6 @@ function addActorDetails(actor)
   });
 
 }
-//This function will add the details of a movie to the page this function is to be used when someone clicks on a movie poster
 function addMovieDetails(movie) {
     fakeLoader();
     var url = ("api/movies/" + movie);
@@ -238,20 +243,45 @@ function addMainPageDetails()
   getTelevision("latest", "/api/featured/tv/popular");
   displayPopular();
 }
-
-// End of adding detail functions
-
+//Adding details to the main page
+fakeLoader();
 slickinit();
 getMovie("nowPlaying","/api/featured/now_playing");
 getMovie("upcoming","/api/featured/now_playing");
 getTelevision("latest", "/api/featured/tv/popular");
 displayPopular();
 
-//this function will get the movies requested and put them into a slick carousel
+// End of adding detail functions
+
+//Functions to get api information and display them
+function displayPopular() {
+  settings.url = "/api/popular"; //get the data from the /api/popular route
+
+  $.get(settings).done(function(response) {
+        let counter = 0;
+        $.each(response.results, function(i, item) {
+        if (counter == 0)
+      {
+         let img = imgURL + "original" + item.backdrop_path;
+
+         if(item.backdrop_path)
+         {
+             $("#populardisplay").append("<div class='carousel-inner'> <div  class='carousel-item active '><div class = 'movie'><a id = '" +item.id + "' class= 'movieButton btn  ' >About this movie</a></div><div class = 'overlay'> <div class = 'droptext'> <h2>" + item.original_title + " </h2>  </div> <img    class='d-block w-10 img-fluid display-img  movie' src=" + img + " alt='First slide'> </div>");
+         }
+      }
+         else if (counter < 3 && counter >0)
+      {
+             let img = imgURL + "original" + item.backdrop_path;
+            $(".carousel-inner").append(" <div class='carousel-item display-img' > <div class = 'movie'><a id = '" +item.id + "' class= 'movieButton btn btn-primary ' >About this movie</a></div><div class = 'droptext'> <h2>" + item.original_title + " </h2></div>  <img id = '" +item.id + "' class='d-block w-10 img-fluid ' src=" + img + " alt='First slide'</div>");
+      }
+      counter++;
+    });
+  });
+}
+
 function getMovie(slider,url) {
   settings.url = url; //get data from the api/nowPlaying route
-  $.ajax(settings).done(function(response) {
-    console.log(response);
+  $.get(settings).done(function(response) {
     $.each(response.results, function(i, item) { //now get each movie
       // add the movie picture and title to a carousel item
 
@@ -265,39 +295,13 @@ function getTelevision (slider, url)
 {
   settings.url = url; //get data from the api/nowPlaying route
   $.get(settings).done(function(response) {
-    console.log(response);
+
     $.each(response.results, function(i, item) { //now get each movie
       // add the movie picture and title to a carousel item
 
       $('#' + slider).slick('slickAdd', "<div class = 'television carousel' ><div class = 'rating'> <p>"+ item.vote_average + "</p></div><a  id =' " + item.id + "'><img class = 'poster' src='" + imgURL + "w154" + item.poster_path + "'/img></a>" + "<p>" + item.name + "</p>" + " </div>");
 
 
-    });
-  });
-}
-
-//This function gets three random movies that are currently popular and displays them
-function displayPopular() {
-  settings.url = "/api/popular"; //get the data from the /api/popular route
-
-  $.ajax(settings).done(function(response) {
-        let counter = 0;
-        $.each(response.results, function(i, item) {
-        if (counter == 0)
-      {
-         let img = imgURL + "original" + item.backdrop_path;
-         console.log(img);
-         if(item.backdrop_path)
-         {
-             $("#populardisplay").append("<div class='carousel-inner'> <div  class='carousel-item active '><div class = 'movie'><a id = '" +item.id + "' class= 'movieButton btn  ' >About this movie</a></div><div class = 'overlay'> <div class = 'droptext'> <h2>" + item.original_title + " </h2>  </div> <img    class='d-block w-10 img-fluid display-img  movie' src=" + img + " alt='First slide'> </div>");
-         }
-      }
-         else if (counter < 3 && counter >0)
-      {
-             let img = imgURL + "original" + item.backdrop_path;
-            $(".carousel-inner").append(" <div class='carousel-item display-img' > <div class = 'movie'><a id = '" +item.id + "' class= 'movieButton btn btn-primary ' >About this movie</a></div><div class = 'droptext'> <h2>" + item.original_title + " </h2></div>  <img id = '" +item.id + "' class='d-block w-10 img-fluid ' src=" + img + " alt='First slide'</div>");
-      }
-      counter++;
     });
   });
 }
@@ -344,11 +348,6 @@ function getTelevisionTrailer(televisionId)
      $(".trailer").append("<iframe src ='https://www.youtube.com/embed/" + response.results[0].key + "' allowfullscreen </iframe>");
   });
 }
-//get random num function
-function getRandom(length) {
-  var random = Math.floor((Math.random() * length) + 1);  // this variable will get a random number between 1 and the length chosen by the function
-  return random; // return the randomly chosen number
-}
 
 //Functions for the plugins
 
@@ -366,7 +365,7 @@ function slickinit()
   $('.titles-slider').slick({
     infinite: false,
     speed: 400,
-    dots: true,
+    dots: false,
     slidesToShow: 6,
     slidesToScroll: 6,
     responsive: [{

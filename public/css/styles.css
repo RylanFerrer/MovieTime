@@ -3,16 +3,20 @@ body{
   color: white;
 
 }
-h1 {
+
+/* Header Styling */
+.header {
   color: white;
   text-align: center;
 }
-.slick-next{ right: 20px;}
-.titles-slider{
-  margin-left: 30px;
-}
-.header {
-  text-align: center;
+
+/*Popular Backdrop Stylings */
+.display-img {
+
+position: relative;
+outline: none;
+
+
 }
 .droptext{
   position: absolute;
@@ -22,16 +26,10 @@ h1 {
   color:#fff;
   text-align: center;
 }
-.popular{
-  padding: 3% 3%;
-}
-.display-img {
-
-position: relative;
-outline: none;
 
 
-}
+
+/*Movie and Tv Poster Stylings */
 .rating {
   position: absolute;
 
@@ -46,15 +44,17 @@ outline: none;
   text-align: center;
   margin-top: 10px;
 }
-
 .poster:hover {
   background-color: red;
   opacity: 0.7;
   cursor: pointer;
 }
-.character{
-  font-weight: bold;
-  margin-bottom: -5px
+/* Trailer Stylings */
+
+.description {
+  padding-left: 15%;
+  padding-right: 15%;
+  margin-bottom: 100px;
 }
 .trailer {
   margin-bottom: 80px;
@@ -67,26 +67,41 @@ outline: none;
   width: 50%;
 
 }
+/* Actor Poster Styling */
+.character{
+  font-weight: bold;
+  margin-bottom: -5px
+}
+
+
+/*Button Stylings */
 .backButton {
   position: absolute;
   margin-top: 25px;
   margin-left: 25px;
   cursor: pointer;
 }
-
+.searchBackButton {
+  position: relative;
+}
 .movieButton {
   position: absolute;
+  cursor: pointer;
   bottom: 20px;
   left: 20px;
   z-index: 10;
   background-color: red;
   color: black;
-
 }
-.description {
-  padding-left: 15%;
-  padding-right: 15%;
-  margin-bottom: 100px;
+
+
+
+
+
+
+/* Carousel Stylings */
+.carousel-padding{
+  padding: 3% 3%;
 }
 .controls {
   color:black;
@@ -94,27 +109,10 @@ outline: none;
 .carousel{
   margin-right: 10px;
 }
-.profile{
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  margin-bottom: 20px;
+.slick-next{ right: 20px;}
+.titles-slider{
+  margin-left: 30px;
 }
-#bio{
-  margin-bottom: 50px;
-}
-.backdrop{
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-}
-
-
-  #populardisplay{
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-  }
 
   .carousel-item:after {
   content:"";
@@ -125,4 +123,21 @@ outline: none;
   left:0;
   right:0;
   background:rgba(0,0,0,0.25);
+}
+
+/* Other Css */
+.logo {
+  height: 40px;
+}
+.top {
+  margin-bottom: 50px;
+}
+#bio{
+  margin-bottom: 50px;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
